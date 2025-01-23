@@ -5,6 +5,7 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { AuthPayLoadDto } from './dto/AuthPayloadDto.dto';
 import { LocalGuard } from './guards/local.guard';
 import { Request } from 'express';
+import { JwtGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -17,8 +18,9 @@ export class AuthController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   findAll() {
-    return this.authService.findAll();
+    return "data here is protected"
   }
 
   @Get(':id')
