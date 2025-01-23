@@ -35,8 +35,9 @@ export class AuthService {
     if(!isLogged){
       throw new HttpException(`Password is wrong`,HttpStatus.FORBIDDEN)
     }
-    const {username,email:userEmail}=user;
-    return await this.jwtService.signAsync({username,userEmail});
+    const {username,email:userEmail,_id:id}=user;
+
+    return await this.jwtService.signAsync({username,userEmail,id});
   }
 
   findAll() {
