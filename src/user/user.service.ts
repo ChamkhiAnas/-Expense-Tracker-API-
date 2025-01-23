@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
-import { ValidateUserDto } from './dto/validate-user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,16 +17,18 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const {username,email,password,}=createUserDto
+    const {username,email,password,birthdate}=createUserDto
     const hashed_password=await this.hashString(password);
-    const user = await new this.userModel({username,email,"password":hashed_password})
+    const user = await new this.userModel({
+      username,
+      email,
+      "password":hashed_password,    
+      ...(birthdate && { birthdate }) 
+    })
     return user.save()
   }
 
-  async validate(validateUserDto:ValidateUserDto){
-    
 
-  }
 
   findAll() {
     return `This action returns all user`;
