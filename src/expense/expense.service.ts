@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from 'src/category/entities/category.entity';
 import { Expense } from './entities/expense.entity';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 
 @Injectable()
 export class ExpenseService {
@@ -87,7 +87,22 @@ export class ExpenseService {
   }
 
 
-  remove(id: number) {
-    return `This action removes a #${id} expense`;
+  async remove(userId,id) {
+
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`Invalid ID format: ${id}`);
+    }
+
+
+    const removed_expense=await this.ExpenseModel.findOneAndDelete({  
+      _id: id
+    }).exec()
+
+
+    if (!removed_expense) {
+      throw new NotFoundException(`Expense with ID ${id} not found`);
+    }
+
+    return removed_expense;
   }
 }

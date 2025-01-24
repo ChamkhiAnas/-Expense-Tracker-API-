@@ -39,8 +39,11 @@ export class ExpenseController {
     return this.expenseService.update(userId,id, updateExpenseDto);
   }
 
+
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.expenseService.remove(+id);
+  remove(@Request() req,@Param('id') id: string) {
+    const userId = req.user.id; 
+    return this.expenseService.remove(userId,id);
   }
 }
