@@ -3,6 +3,7 @@ import { ExpenseService } from './expense.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { FilterExpenseDto } from './dto/filter-expense.dto';
 
 @Controller('expense')
 export class ExpenseController {
@@ -21,10 +22,24 @@ export class ExpenseController {
     return this.expenseService.create(userId,createExpenseDto);
   }
 
-  @Get()
-  findAll() {
-    return this.expenseService.findAll();
+
+  @Post('filter-by-date')
+  @UseGuards(JwtGuard)
+  GetWithDateFilters(@Request() req,@Body() filterExpenseDto: FilterExpenseDto) {
+    const userId = req.user.id; 
+    return this.expenseService.findByDate(userId,filterExpenseDto)
   }
+
+
+
+  @UseGuards(JwtGuard)
+  @Get()
+  findAll(@Request() req) {
+    const userId = req.user.id; 
+    return this.expenseService.findAll(userId);
+  }
+
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

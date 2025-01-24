@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Category } from 'src/category/entities/category.entity';
 import { Expense } from './entities/expense.entity';
 import { Model, isValidObjectId } from 'mongoose';
+import { FilterExpenseDto } from './dto/filter-expense.dto';
 
 @Injectable()
 export class ExpenseService {
@@ -39,9 +40,34 @@ export class ExpenseService {
     });
         
   }
+  
+  async findByDate(userId, filterExpenseDto:FilterExpenseDto){
 
-  findAll() {
-    return `This action returns all expense`;
+    const {startDate,endDate}=filterExpenseDto
+    
+    const filteredExpenses=await this.ExpenseModel.find({
+      createdAt:{
+          $gte: new Date(startDate), // Start of the range
+          $lte: new Date(endDate),   // End of the range
+      },
+      user:userId
+    })
+
+
+    return filteredExpenses;
+
+  }
+
+  async findAll(userId) {
+
+    const user_expenses=await this.ExpenseModel.find({
+      user:userId
+    }).populate({
+      path:"category",
+      select:"name -_id"
+    }).exec()
+    
+    return user_expenses;
   }
 
   findOne(id: number) {
@@ -92,7 +118,6 @@ export class ExpenseService {
     if (!isValidObjectId(id)) {
       throw new BadRequestException(`Invalid ID format: ${id}`);
     }
-
 
     const removed_expense=await this.ExpenseModel.findOneAndDelete({  
       _id: id
