@@ -23,6 +23,11 @@ Sign up as a new user.
 - Remove existing expenses
 - Update existing expenses
 
+## Roadmap challenge link 
+
+https://roadmap.sh/projects/expense-tracker-api
+
+
 ## Project setup
 
 ```bash
